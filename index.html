@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>signin-signup page</title>
+        <style>
+
+            .main-container {
+                width: 500px;
+                height: 500px;
+                background-color: red;
+                border-radius: 1rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                margin: 0 auto;
+            }
+            #email, #passwd {
+                background: rgb(127, 207, 127);
+                border-radius: 1rem;
+            }
+            #login, #register {
+                background: rgb(64, 125, 223);
+                border-radius: 1rem;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="main-container">
+            <input id="email" type="email" placeholder="email@gmail.com">
+            <input id="passwd" type="password" minlength="6" maxlength="12" placeholder="123456">
+            <button id="login">Login</button>
+            <button id="register">Register</button>
+        </div>
+        <script>
+            const email = document.getElementById("email");
+            const password = document.getElementById("passwd");
+            const login = document.getElementById("login");
+            const register = document.getElementById("register");
+            let loginCounter = 0;
+
+
+            // register button (event listener)
+            register.addEventListener("click", () => {
+                if (email.value && password.value) {
+                    const dataset = {
+                        email: email.value,
+                        password: password.value,
+                        loginCounter:0
+                    }
+                    registerData(dataset);
+                };
+            });
+
+            // login button (event listener)
+            login.addEventListener("click", () => {
+                if (email.value && password.value) {
+                    const dataset = {
+                        email: email.value,
+                        password: password.value,
+                        loginCounter: loginCounter + 1
+                    }
+                    userLogin(dataset);
+                };
+            });
+
+
+            // function to add data
+            function registerData(data) {
+                let storedData = localStorage.getItem("userData");
+                storedData = JSON.parse(storedData);
+                storedData.forEach(element => {
+                    if (data.email == element.email) {
+                        alert('There is already a user has the same email');
+                        return;
+                    } 
+                        
+                    
+                });
+                // add back the data to local storage
+                storedData.push(data);
+                localStorage.setItem("userData", JSON.stringify(storedData));
+            };
+
+            // function fot user login
+            function userLogin(data) {
+                const savedUser = JSON.parse(localStorage.getItem("userData"));
+                savedUser.forEach(element => {
+                    if (element.email === email.value && element.password === password.value) {
+                        alert('Sign in successful!');
+                    } else {
+                        alert('Invalid username or password.');
+                    }
+                });
+            }
+
+        </script>
+    </body>
+</html>
