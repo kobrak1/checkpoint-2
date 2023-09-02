@@ -1,88 +1,92 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>ToDo List</title>
-</head>
-<body>
-    <h1>ToDo List</h1>
-    <input type="text" id="task" placeholder="Write a task...">
-    <button onclick="addTask()">Add</button>
-    <br>
-    <input type="checkbox" id="completedOnly" onchange="filterTasks()"> Show only completed tasks
-    <ul id="taskList">
-        <!-- Görevler buraya eklenecek -->
-    </ul>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ToDo-list</title>
+        <style>
+            * {
+                font-family: sans-serif;
+                color: gray;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>My ToDo List</h2>
+        <input type="text" id="task" placeholder="Write a task to do..">
+        <button onclick="addTask()">Add</button>
+        <br>
+        <input type="checkbox" id="completedOnly" onchange="filterTasks()">Only show comleted tasks
+        <ul id="taskList">
+            <!-- tasks are going to be added here -->
+        </ul>
+        
 
-    <script>
-        // Local Storage'daki verileri al
-        function getTasksFromLocalStorage() {
-            const tasksJSON = localStorage.getItem('tasks');
-            return tasksJSON ? JSON.parse(tasksJSON) : [];
-        }
+        <script>
+            // get data from local storage
+            function getTasksFromLocalStorage() {
+                const tasksJSON = localStorage.getItem("tasks");
+                return tasksJSON ? JSON.parse(tasksJSON) : [];
+            };
+            // save the data to local storage
+            function saveTasksToLocalStorage(tasks) {
+                localStorage.setItem("tasks", JSON.stringify(tasks));
+            };
+            // add a new task
+            function addTask() {
+                const taskInput = document.getElementById("task");
+                const taskText = taskInput.value.trim();
 
-        // Veriyi Local Storage'a kaydet
-        function saveTasksToLocalStorage(tasks) {
-            localStorage.setItem('tasks', JSON.stringify(tasks));
-        }
+                if(taskText !== '') {
+                    const tasks = getTasksFromLocalStorage();
+                    tasks.push({text: taskText, completed: false});
+                    saveTasksToLocalStorage(tasks);
 
-        // Yeni bir görev ekle
-        function addTask() {
-            const taskInput = document.getElementById('task');
-            const taskText = taskInput.value.trim();
+                    taskInput.value = "";
+                    displayTasks();
+                }
+            };
+            // list the tasks
+            function displayTasks() {
+                const taskList = document.getElementById("taskList");
+                taskList.innerHTML = "";
 
-            if (taskText !== '') {
                 const tasks = getTasksFromLocalStorage();
-                tasks.push({ text: taskText, completed: false });
-                saveTasksToLocalStorage(tasks);
 
-                taskInput.value = '';
-                displayTasks();
-            }
-        }
-
-        // Görevleri listele
-        function displayTasks() {
-            const taskList = document.getElementById('taskList');
-            taskList.innerHTML = '';
-
-            const tasks = getTasksFromLocalStorage();
-
-            tasks.forEach((task, index) => {
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `<input type="checkbox" id="task${index}" onchange="toggleTask(${index})" ${task.completed ? 'checked' : ''}> ${task.text}`;
-                taskList.appendChild(listItem);
-            });
-        }
-
-        // Görevi tamamlandı olarak işaretle veya geri al
-        function toggleTask(index) {
-            const tasks = getTasksFromLocalStorage();
-            tasks[index].completed = !tasks[index].completed;
-            saveTasksToLocalStorage(tasks);
-            displayTasks();
-        }
-
-        // Sadece tamamlananları göster veya tümünü göster
-        function filterTasks() {
-            const completedOnlyCheckbox = document.getElementById('completedOnly');
-            const taskList = document.getElementById('taskList');
-            const tasks = getTasksFromLocalStorage();
-
-            if (completedOnlyCheckbox.checked) {
-                const completedTasks = tasks.filter(task => task.completed);
-                taskList.innerHTML = '';
-                completedTasks.forEach((task, index) => {
-                    const listItem = document.createElement('li');
-                    listItem.innerHTML = `<input type="checkbox" id="task${index}" onchange="toggleTask(${index})" checked> ${task.text}`;
-                    taskList.appendChild(listItem);
+                tasks.forEach((task, index) => {
+                        const listItem = document.createElement("li");
+                        listItem.innerHTML = '<input type="checkbox" id="task${index}" onchange="toggleTask(${index})" $(task.completed ? "checked" : "" )>{task.text}';
+                        taskList.appendChild(listItem);
                 });
-            } else {
+            };
+            // function to toggle the tasks
+            function toggleTask(index) {
+                const tasks = getTasksFromLocalStorage();
+                tasks[index].completed = !tasks[index].completed;
+                saveTasksToLocalStorage(tasks);
                 displayTasks();
-            }
-        }
+            };
+            // function to filter the tasks
+            function filterTasks() {
+                const completedOnlyCheckbox = document.getElementById("completedOnly");
+                const taskList = document.getElementById('taskList');
+                const tasks = getTasksFromLocalStorage();
 
-        // Sayfa yüklendiğinde görevleri görüntüle
-        window.onload = displayTasks;
-    </script>
-</body>
+                if (completedOnlyCheckbox.checked) {
+                    const completedTasks = tasks.filter(task => task.completed);
+                    taskList.innerHTML = '';
+                    completedTasks.forEach((task, index) => {
+                        const listItem = document.createElement("li");
+                        listItem.innerHTML = '<input type="checkbox" id="task${index}" onchange="toggleTask(${index})" checked> {task.text}';
+                        taskList.appendChild(listItem);
+                    });
+                } else {
+                    displayTasks();
+                };
+            };
+            // display the tasks when the webpage refreshed
+            window.onload = displayTasks();
+
+        </script>
+    </body>
 </html>
